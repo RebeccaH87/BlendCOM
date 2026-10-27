@@ -1,4 +1,4 @@
-# DICOM Point Cloud Importer
+# BlendCOM: A DICOM Processing Toolset for Blender
 
 A Blender addon for working with medical scans: it reads DICOM datasets and .fre files and turns them into point
 clouds, volumes and meshes, as well as separating them into anatomical pieces. 
