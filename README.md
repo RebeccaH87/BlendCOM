@@ -3,7 +3,7 @@
 A Blender addon for working with medical scans: it reads DICOM datasets and .fre files and turns them into point
 clouds, volumes and meshes, as well as separating them into anatomical pieces. 
 
-No additional intallations needed. NumPy is included with Blender, and a copy of PyDicom is bundled with the plugin. PyDicom is bundled under the MIT license; see vendor/pydicom/LICENSE.
+No additional installations needed. NumPy is included with Blender, and a copy of pydicom is bundled with the plugin under the MIT license — see [Credits and licenses](#credits-and-licenses).
 
 Requires Blender 5.2 or newer.
 
@@ -22,6 +22,8 @@ Requires Blender 5.2 or newer.
 9. [File formats](#file-formats)
 10. [Limits worth knowing](#limits-worth-knowing)
 11. [Layout and tests](#layout-and-tests)
+12. [Credits and licenses](#credits-and-licenses)
+13. [Install](#install)
 
 ---
 
@@ -30,7 +32,7 @@ Requires Blender 5.2 or newer.
 There are three basic "shapes" scan data can be processed in using this plugin, with each one being useful for a different task:
 
 | Shape | Definition | Used For |
-
+| --- | --- | --- |
 | **Point cloud** | one point per voxel above a threshold | picking within a threshold, seeing what is there, segmenting |
 | **Volume** | the measured field itself, rendered | reading the scan, finding where something is, cutting through it |
 | **Mesh** | a surface at one chosen value set | printing, sculpting, export, anything that needs real geometry |
@@ -55,7 +57,7 @@ common. That anisotropy is why **Equalize Voxel Aspect** exists.
 **Hounsfield units (CT).** A calibrated density scale:
 
 | Tissue | HU |
-
+| --- | --- |
 | Air | −1000 |
 | Lung | −700 to −600 |
 | Fat | −100 |
@@ -89,6 +91,7 @@ Reading a study in, and turning one series into points.
 ### Finding the data
 
 | Control | What it does |
+| --- | --- |
 | **Source Path** | A folder of .dcm files, a `.zip` of scans, or a folder of `.fre` images. |
 | **Source Is Zip** | Tick for an archive. |
 | **Scan Series** | Reads the headers and lists every series it finds. This must be done before attempting any file processing. |
@@ -100,6 +103,7 @@ its middle slice, making determining what is needed at any given time significan
 ### Choosing what becomes a point
 
 | Control | What it does |
+| --- | --- |
 | **Threshold** | Voxels dimmer than this are discarded. |
 | **Max Threshold** | Voxels brighter than this are discarded too (0 = no limit). |
 | **Stride** | Take every Nth voxel. A 2 means an eighth as many points. |
@@ -138,6 +142,7 @@ point cloud. It works two different ways depending on the modality.
 the boundary between muscles, and the fat fraction to tell muscle from fat.
 
 | Control | What it does |
+| --- | --- |
 | **Boundary Strength** | How dark a line has to be to count as a boundary. A higher number cuts more aggressively. |
 | **Fat Plane Cut** | How fatty a voxel must be to count as a fat plane separating muscles. Lowering the value picks up thinner layers, while raising it will result in larger clumps. |
 | **Slice Linking** | How much overlap two regions need across slices to be called the same structure. Raise this if neighboring features are being counted as one, and lower it to split more aggressively between layers. |
@@ -156,6 +161,7 @@ The **Thinnest Layer** setting is worth understanding. A boundary that is grazed
 What makes it possible is that subcutaneous fat is bright in the fat image, so it forms a closed bright ring between the dark inside and the dark air outside. This allows the inside to be determined from the body silhouette.
 
 | Control | What it does |
+| --- | --- |
 | **Dark Level** | How dark a voxel must be, in both images, to count as having no signal. Defaults to 0.18. Raise it to take in more bone, lower it if muscle boundaries appear or two bones come out as one piece. Past about 0.30 everything fuses. |
 | **Min Bone (cm3)** | Discard pieces smaller than this. |
 
@@ -169,6 +175,7 @@ one is there because measurement showed the others were not enough.
 - **It is longer than it is wide, or else plainly walled in.** On a coarse or noisy series the fat threshold shatters into dozens of small blobs that happen to sit beside something dark.Raising **Cortex Rim** tightens this route too; it can never be looser than the value you set.
 
 | Control | What it does |
+| --- | --- |
 | **Marrow Brightness** | How bright the fat image must be for a voxel to count as marrow. Lower it if bones come out hollow or broken. |
 | **Cortex Rim** | How much of a candidate's rim must have no signal for it to be bone. Lower it if bones are being missed, raise it if other fat is picked up. |
 | **Min Bone (cm3)** | Discard marrow smaller than this. A femur section runs to tens of cm3; the noise is fractions of one. |
@@ -184,6 +191,7 @@ then separated object by object using the dense cortical shell as seeds, which
 is what divides touching tarsals and phalanges.
 
 | Control | What it does |
+| --- | --- |
 | **Cortex Level (HU)** | How dense a voxel must be to be cortical shell. Lower this if bones are coming out merged. |
 | **Min Bone Seed (cm3)** | The smallest seed that can start a separate bone. Lower this to pick up on smaller bones. |
 | **Split Small Bones** | How aggressively to divide bones that are touching. A lower value splits more aggressively. |
@@ -202,6 +210,7 @@ Removes a percentage of the darkest points from an existing cloud. Good for trim
 noise or peeling off a bright rind.
 
 | Control | What it does |
+| --- | --- |
 | **Remove Percent** | How dark the points removed should be based on the percentage of the cloud they take up. |
 | **Invert (Remove Lightest)** | Drop the brightest points instead of the darkest. |
 | **Output Suffix** | Appended to the new cloud's name. |
@@ -215,6 +224,7 @@ Resolution and detail, and everything that rebuilds geometry. These resolution s
 ### Resolution
 
 | Control | What it does |
+| --- | --- |
 | **Resolution Multiplier** | How much finer than the original scan's density to resample up to. |
 | **Voxel Budget (M)** | A memory ceiling, in millions of voxels. Only raise this if the desired resolution requires it. |
 | **Max Vertices (M)** | Refuse to build a mesh larger than this. |
@@ -235,6 +245,7 @@ Drops points surrounded on all sides, leaving a shell. **Shell Thickness** is ho
 ### Surface Mesh Detail
 
 | Control | What it does |
+| --- | --- |
 | **Surface Smoothing** | Blur applied before the surface is extracted. Above 1.0 rounds detail away. |
 | **Fill Holes** | Bridges gaps up to roughly twice this many voxels wide. High values may weld separate structures together. |
 | **Cover Every Point** / **Cover Radius** | Guarantee every point ends up inside the surface |
@@ -270,6 +281,7 @@ Which range of the scan to show.
 A slice plane through the volume.
 
 | Control | What it does |
+| --- | --- |
 | **Cut Through** | Turn the cut feature on. |
 | **Cut Axis** | Determines which way to cut. **Auto** faces the viewport. |
 | **Cut Depth** | Where along the axis of the chosen direction to make the cut. |
@@ -285,6 +297,7 @@ Material Preview or Rendered view shows the volume itself, through the transfer 
 ### Shape
 
 | Control | What it does |
+| --- | --- |
 | **Surface Level** | Where in the threshold or window the visible surface sits. |
 | **Edge Hardness** | How abruptly it goes from clear to solid. At zero it resembles a soft fog. Turned up, it's closer to a surface |
 | **Density** | How solid the volume looks when rendered. |
@@ -370,6 +383,7 @@ it. To see it: **Material Preview**, or Solid mode with Color set to
 A series that cannot support a 3D reconstruction produces a point cloud that looks perfectly fine and then fails to mesh for reasons that look like settings. When the files themselves are the problem, the addon says so in a popup before you spend time tuning.
 
 | Warning | What it means |
+| --- | --- |
 | **localizer / scout** | A planning image, not a volume. Selected series is three orthogonal planes and cannot support a reconstruction however it is tuned |
 | **slices are missing** | The positions span more slices than the file count. Everything past a gap sits too close to the start. |
 | **slices share a position** | Duplicates, stacked as if separate. |
@@ -467,6 +481,72 @@ Two more need a real Blender, because OpenVDB and the UI only exist inside it:
 blender -b --factory-startup --python tests/test_volume_live.py
 blender -b --factory-startup --python tests/test_panels_live.py
 ```
+
+---
+
+## Credits and licenses
+
+BlendCOM bundles and builds on other people's work. Everything below is either
+shipped inside the addon or required to run it.
+
+### Bundled with the addon
+
+**pydicom 3.0.2** — MIT License
+Copyright (c) 2008–2020 Darcy Mason and pydicom contributors
+<https://github.com/pydicom/pydicom>
+
+Shipped at `dicom_pointcloud_importer/vendor/pydicom/`, with the full licence
+text at `dicom_pointcloud_importer/vendor/pydicom-3.0.2.dist-info/licenses/LICENSE`.
+This is what lets the addon read DICOM without asking anyone to install
+anything into Blender's Python.
+
+**GDCM (Grassroots DICOM)** — BSD 3-Clause
+Copyright (c) 2006–2016 Mathieu Malaterre
+Copyright (c) 1993–2005 CREATIS (Centre de Recherche et d'Applications en
+Traitement de l'Image)
+
+pydicom's private tag dictionary is generated from GDCM's, and *that portion is
+BSD rather than MIT*. Its terms are reproduced in the same licence file above
+and include a non-endorsement clause: the names of Mathieu Malaterre, CREATIS
+and their contributors may not be used to endorse or promote anything derived
+from it.
+
+**DICOM well-known colour palettes** — from the published standard, not software
+`vendor/pydicom/data/palettes/*.dcm`, derived from DICOM PS3.6 Annex B (NEMA).
+
+### Required at runtime, not bundled
+
+| Project | Licence | How it is used |
+| --- | --- | --- |
+| Blender and its `bpy` API | GPL-2.0-or-later | The host application. Everything in `operators.py`, `panel.py` and `previews.py` is written against it |
+| NumPy | BSD 3-Clause | Every array operation in the addon. Ships inside Blender |
+| OpenVDB | Apache-2.0 | The grids behind the Volume Viewer. Ships inside Blender |
+
+Because the addon imports `bpy`, the Blender Foundation's position is that it
+must be distributed on GPL-compatible terms. MIT, BSD 3-Clause and Apache-2.0
+are all compatible with that, so nothing bundled here conflicts with it.
+
+### Standards and published methods
+
+These are specifications and algorithms the addon implements, not code taken
+from anywhere.
+
+| Source | Where it is used |
+| --- | --- |
+| DICOM standard (NEMA PS3) | `io_dicom.py` — headers, series discovery, stack geometry |
+| NIfTI-1 specification | `nifti.py`, written against the spec rather than depending on nibabel |
+| GE "genesis" `.fre` format | `fre.py` — `IMGF` magic, 3416-byte header, per-slice geometry |
+| Visible Human Project, U.S. National Library of Medicine | The `.fre` data the reader was built and tested against. The NLM sets its own terms for that dataset |
+| Unix `compress` / LZW | `.Z` decompression |
+| Gibson, S.F.F. (1998), "Constrained Elastic Surface Nets" | `isosurface.py` |
+
+Beyond the vendored pydicom above, the addon's own modules do not bundle
+third-party code. The volumetric primitives in `voxelgrid.py` — connected
+component labelling, binary morphology, watershed, flood fill — are standard,
+unpatented techniques implemented directly against numpy, because Blender
+ships numpy but not scipy.
+
+---
 
 ## Install
 
